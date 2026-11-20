@@ -112,5 +112,94 @@ div#component_streamcomponent_loader.hidden {
     display: none;
 }
 
+/* Upscaler */
+div#component_upscaler_menu {
+    z-index: 99;
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    width: 300px;
+    padding: 14px 16px 16px;
+    border-radius: 8px;
+    backdrop-filter: blur(20px);
+    background: rgba(20, 20, 22, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 14px;
+}
+div#component_upscaler_menu .upscaler_head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 16px;
+}
+div#component_upscaler_menu .upscaler_close {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0.7;
+}
+div#component_upscaler_menu .upscaler_close:hover { opacity: 1; }
+div#component_upscaler_menu .upscaler_label {
+    margin: 12px 0 6px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+}
+div#component_upscaler_menu .upscaler_opt {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 5px 0;
+    cursor: pointer;
+}
+div#component_upscaler_menu .upscaler_opt input { margin-top: 3px; accent-color: #008746; }
+div#component_upscaler_menu .upscaler_opt small {
+    display: block;
+    opacity: 0.6;
+    font-size: 12px;
+}
+div#component_upscaler_menu .upscaler_check { margin-top: 10px; }
+div#component_upscaler_menu .upscaler_seg {
+    display: flex;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #444444;
+}
+div#component_upscaler_menu .upscaler_seg button {
+    flex: 1;
+    padding: 7px 6px;
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 13px;
+}
+div#component_upscaler_menu .upscaler_seg button + button { border-left: 1px solid #444444; }
+div#component_upscaler_menu .upscaler_seg button.on { background: #008746; }
+div#component_upscaler_menu .upscaler_status {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 12px;
+    opacity: 0.75;
+    line-height: 1.4;
+}
+div#component_upscaler_stats {
+    z-index: 97;
+    position: fixed;
+    left: 10px;
+    bottom: 10px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.55);
+    font-size: 12px;
+    font-family: monospace;
+    pointer-events: none;
+}
+
 /* uPlot css */
 .uplot, .uplot *, .uplot *::before, .uplot *::after {box-sizing: border-box;}.uplot {font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";line-height: 1.5;width: min-content;}.u-title {text-align: center;font-size: 18px;font-weight: bold;}.u-wrap {position: relative;user-select: none;}.u-over, .u-under {position: absolute;}.u-under {overflow: hidden;}.uplot canvas {display: block;position: relative;width: 100%;height: 100%;}.u-axis {position: absolute;}.u-legend {font-size: 14px;margin: auto;text-align: center;}.u-inline {display: block;}.u-inline * {display: inline-block;}.u-inline tr {margin-right: 16px;}.u-legend th {font-weight: 600;}.u-legend th > * {vertical-align: middle;display: inline-block;}.u-legend .u-marker {width: 1em;height: 1em;margin-right: 4px;background-clip: padding-box !important;}.u-inline.u-live th::after {content: ":";vertical-align: middle;}.u-inline:not(.u-live) .u-value {display: none;}.u-series > * {padding: 4px;}.u-series th {cursor: pointer;}.u-legend .u-off > * {opacity: 0.3;}.u-select {background: rgba(0,0,0,0.07);position: absolute;pointer-events: none;}.u-cursor-x, .u-cursor-y {position: absolute;left: 0;top: 0;pointer-events: none;will-change: transform;z-index: 100;}.u-hz .u-cursor-x, .u-vt .u-cursor-y {height: 100%;border-right: 1px dashed #607D8B;}.u-hz .u-cursor-y, .u-vt .u-cursor-x {width: 100%;border-bottom: 1px dashed #607D8B;}.u-cursor-pt {position: absolute;top: 0;left: 0;border-radius: 50%;border: 0 solid;pointer-events: none;will-change: transform;z-index: 100;/*this has to be !important since we set inline "background" shorthand */background-clip: padding-box !important;}.u-axis.u-off, .u-select.u-off, .u-cursor-x.u-off, .u-cursor-y.u-off, .u-cursor-pt.u-off {display: none;}

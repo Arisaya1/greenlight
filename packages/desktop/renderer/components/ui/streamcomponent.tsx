@@ -7,6 +7,7 @@ import Card from './card'
 import uPlot from 'uplot'
 import Ipc from '../../lib/ipc'
 import startStallWatchdog from '../../lib/stallwatchdog'
+import UpscalerMenu from './upscalermenu'
 import { useTranslation } from 'react-i18next'
 
 interface StreamComponentProps {
@@ -32,6 +33,7 @@ function StreamComponent({
     let webRtcStatsInterval
 
     const [micStatus, setMicStatus] = React.useState(false)
+    const [upscalerOpen, setUpscalerOpen] = React.useState(false)
     const [waitingSeconds, setWaitingSeconds] = React.useState(0)
 
 
@@ -417,12 +419,17 @@ function StreamComponent({
                             width: '25%',
                             textAlign: 'right',
                         }}>
+                            <Button label={<span><i className="fa-solid fa-wand-magic-sparkles"></i> Upscale</span>} title="Upscaler settings" className={upscalerOpen ? 'btn-primary' : 'btn'} onClick={(e) => {
+                                e.target.blur(); setUpscalerOpen(!upscalerOpen)
+                            }}></Button> &nbsp;
                             <Button label={<i className="fa-solid fa-bug"></i>} title={t("streamWindow.debugTitle")} onClick={(e) => {
                                 e.target.blur(); toggleDebug()
                             }}></Button>
                         </div>
                     </div>
                 </div>
+
+                <UpscalerMenu open={upscalerOpen} onClose={() => setUpscalerOpen(false)} />
 
                 <div id="component_streamcomponent_debug" className='hidden'>
                     <p>{t("streamWindow.debugTitle")}:</p>
