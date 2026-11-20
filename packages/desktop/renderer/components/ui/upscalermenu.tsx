@@ -89,6 +89,17 @@ export default function UpscalerMenu({ open, onClose }: { open: boolean; onClose
                         <button className={settings.scaler === 'bilinear' ? 'on' : ''} onClick={() => update({ scaler: 'bilinear' })}>Soft (bilinear)</button>
                     </div>
 
+                    <div className="upscaler_label upscaler_label_row">
+                        <span>Shader strength</span>
+                        <span>{Math.round((settings.strength ?? 1) * 100)}%</span>
+                    </div>
+                    <input className="upscaler_range" type="range" min={0} max={2} step={0.05} value={settings.strength ?? 1}
+                        disabled={settings.shader === 'off'}
+                        title="100% = the shader as-is. Higher pushes its added detail further, lower blends back toward a plain upscale."
+                        onChange={e => update({ strength: parseFloat(e.target.value) })}
+                        onDoubleClick={() => update({ strength: 1 })}
+                        onKeyDown={e => e.stopPropagation()} />
+
                     <label className="upscaler_opt upscaler_check">
                         <input type="checkbox" checked={settings.stats} onChange={e => update({ stats: e.target.checked })} />
                         <span>Show stats overlay</span>

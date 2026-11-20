@@ -9,6 +9,7 @@ While streaming you can run the stream's video through FSRCNNX or ArtCNN, the sa
 - Shader: Off, FSRCNNX x2 8-0-4-1, ArtCNN C4F16, ArtCNN C4F32
 - Apply: "Only when upscaling" (the shader's own `//!WHEN` rule, same as mpv) or "Always"
 - Scale to screen: Catmull-Rom (sharp) or bilinear (soft)
+- Shader strength, 0-200%: how much of the shader's added detail to apply. 100% is the shader as-is, 200% doubles the detail it adds over a plain upscale, 0% is a plain Catmull-Rom/bilinear upscale. Double-click resets it to 100%.
 - Stats overlay: input/output resolution, fps and GPU ms per frame
 
 The settings are saved in localStorage (`greenlight.upscaler`).
@@ -32,7 +33,7 @@ So I wrote a small runtime that reads the .glsl files unchanged and turns them i
 1. A `<canvas>` sits over the video with `pointer-events: none`, so mouse input still reaches the video underneath.
 2. Each new video frame (`requestVideoFrameCallback`) is uploaded to a texture, and a pass turns it into a BT.709 luma plane.
 3. The shader passes run on that luma into RGBA16F targets, sized per their WIDTH/HEIGHT rules.
-4. A compose pass resamples the upscaled luma to the screen size and adds it back onto the bilinear colour: `rgb + (Y_upscaled - Y_original)`. That keeps the chroma and swaps in the sharp luma, which is roughly what mpv does with a LUMA hook. Letterboxing follows the video's `object-fit`, so the stretch and zoom settings still work.
+4. A compose pass resamples the upscaled luma to the screen size and adds it back onto the bilinear colour: `rgb + (Y_upscaled - Y_original)`. That keeps the chroma and swaps in the sharp luma, which is roughly what mpv does with a LUMA hook. The strength slider scales the shader's contribution here: `Y = Y_plain + strength * (Y_shader - Y_plain)`, where `Y_plain` is the pre-shader luma resampled the same way. At 100% this step is skipped. At 0%, 100% and 200% I measured the added detail at 0x, 1x and 1.97x, and 100% still matches libplacebo at 49.3 dB. Letterboxing follows the video's `object-fit`, so the stretch and zoom settings still work.
 5. Shaders compile through `KHR_parallel_shader_compile`, so loading one doesn't block the stream for long.
 
 The UI lives in `components/ui/upscalermenu.tsx` and is wired into `streamcomponent.tsx`. It finds the stream's video element on its own and reattaches if xbox-xcloud-player replaces it.

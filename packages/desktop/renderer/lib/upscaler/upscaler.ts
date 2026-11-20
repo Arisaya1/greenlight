@@ -6,6 +6,7 @@ export interface UpscalerSettings {
     shader: string // file name in /shaders, or 'off'
     mode: 'auto' | 'always' // auto = respect the shader's WHEN (only when actually upscaling)
     scaler: 'catmull' | 'bilinear' // final resample of the upscaled luma to screen size
+    strength: number // 0..2: how much of the shader's added detail to apply (1 = shader as-is)
     stats: boolean
 }
 
@@ -16,7 +17,7 @@ export const SHADERS: { file: string; label: string; note: string }[] = [
     { file: 'ArtCNN_C4F32.glsl', label: 'ArtCNN C4F32', note: 'Best, ~57 ms on 720p. Not 60 fps on a 1070' },
 ]
 
-export const DEFAULT_SETTINGS: UpscalerSettings = { shader: 'off', mode: 'auto', scaler: 'catmull', stats: false }
+export const DEFAULT_SETTINGS: UpscalerSettings = { shader: 'off', mode: 'auto', scaler: 'catmull', strength: 1, stats: false }
 const STORAGE_KEY = 'greenlight.upscaler'
 
 export function loadSettings(): UpscalerSettings {
@@ -58,11 +59,14 @@ precision highp float;
 uniform sampler2D src;
 uniform sampler2D luma;
 uniform vec2 lumaSize;
+uniform sampler2D lumaBase; // luma before the shader ran
+uniform vec2 lumaBaseSize;
+uniform float strength;
 uniform vec4 rect;
 uniform int useLuma;
 uniform int catmull;
 out vec4 o;
-float lumaCatmull(vec2 uv) {
+float lumaCatmull(sampler2D luma, vec2 lumaSize, vec2 uv) {
     vec2 p = uv * lumaSize - 0.5;
     vec2 f = fract(p);
     vec2 c = (floor(p) + 0.5) / lumaSize;
@@ -92,7 +96,12 @@ void main() {
     vec3 rgb = texture(src, uv).rgb;
     if (useLuma == 1) {
         float yLo = dot(rgb, vec3(0.2126, 0.7152, 0.0722));
-        float yHi = catmull == 1 ? lumaCatmull(uv) : texture(luma, uv).r;
+        float yHi = catmull == 1 ? lumaCatmull(luma, lumaSize, uv) : texture(luma, uv).r;
+        if (strength != 1.0) {
+            // scale the detail the shader added on top of a plain upscale of the same luma
+            float yBase = catmull == 1 ? lumaCatmull(lumaBase, lumaBaseSize, uv) : texture(lumaBase, uv).r;
+            yHi = yBase + strength * (yHi - yBase);
+        }
         rgb += clamp(yHi, 0.0, 1.0) - yLo;
     }
     o = vec4(clamp(rgb, 0.0, 1.0), 1.0);
@@ -449,6 +458,10 @@ export class Upscaler {
         gl.uniform1i(cp.loc.luma, 1)
         gl.uniform2f(cp.loc.lumaSize, lumaOut.w, lumaOut.h)
         gl.uniform4f(cp.loc.rect, rect[0], ch - rect[1] - rect[3], rect[2], rect[3])
+        gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.lumaTarget.texs[0])
+        gl.uniform1i(cp.loc.lumaBase, 2)
+        gl.uniform2f(cp.loc.lumaBaseSize, vw, vh)
+        gl.uniform1f(cp.loc.strength, ran ? Math.max(0, Math.min(2, this.settings.strength ?? 1)) : 1)
         gl.uniform1i(cp.loc.useLuma, ran ? 1 : 0)
         gl.uniform1i(cp.loc.catmull, this.settings.scaler === 'catmull' ? 1 : 0)
         this.draw()

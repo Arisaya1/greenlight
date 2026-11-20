@@ -163,6 +163,16 @@ div#component_upscaler_menu .upscaler_opt small {
     font-size: 12px;
 }
 div#component_upscaler_menu .upscaler_check { margin-top: 10px; }
+div#component_upscaler_menu .upscaler_label_row {
+    display: flex;
+    justify-content: space-between;
+}
+div#component_upscaler_menu .upscaler_range {
+    width: 100%;
+    accent-color: #008746;
+    cursor: pointer;
+}
+div#component_upscaler_menu .upscaler_range:disabled { opacity: 0.4; cursor: default; }
 div#component_upscaler_menu .upscaler_seg {
     display: flex;
     border-radius: 4px;
