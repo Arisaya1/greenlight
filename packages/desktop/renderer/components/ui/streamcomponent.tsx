@@ -6,6 +6,7 @@ import Loader from './loader'
 import Card from './card'
 import uPlot from 'uplot'
 import Ipc from '../../lib/ipc'
+import startStallWatchdog from '../../lib/stallwatchdog'
 import { useTranslation } from 'react-i18next'
 
 interface StreamComponentProps {
@@ -71,6 +72,8 @@ function StreamComponent({
     }
 
     React.useEffect(() => {
+
+        const stopStallWatchdog = startStallWatchdog(xPlayer)
 
         Ipc.onAction('streaming', 'onQueue', (event, waitingTimes) => {
             console.log('Waiting times:', waitingTimes)
@@ -256,6 +259,7 @@ function StreamComponent({
             window.removeEventListener('mousedown', mouseEvent)
             window.removeEventListener('keypress', keyboardPressEvent)
             clearInterval(mouseInterval)
+            stopStallWatchdog()
 
             // ipcRenderer.removeAllListeners('xcloud');
 
